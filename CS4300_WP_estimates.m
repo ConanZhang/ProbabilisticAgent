@@ -1,4 +1,4 @@
-function [pits,Wumpus] = CS4300_WP_estimates(breezes,stench,num_trials)
+function [pits,wumpus] = CS4300_WP_estimates(breezes,stench,num_trials)
 % CS4300_WP_estimates - estimate pit and Wumpus likelihoods
 % On input:
 % breezes (4x4 Boolean array): presence of breeze percept at cell
@@ -36,3 +36,26 @@ function [pits,Wumpus] = CS4300_WP_estimates(breezes,stench,num_trials)
 % Fall 2016
 %
 
+pits = zeros(4,4);
+wumpus = zeros(4,4)
+s = 0;
+while s<num_trials
+    board = CS4300_gen_board(0.2);
+    if CS4300_WP_satisfies(breezes, stench, board)
+        s=s+1; %increment only if satisfied
+        [rows, cols] = size(board);
+        for r= 1:rows
+            for c = 1:cols
+                if board(r,c)==1
+                    pits(r,c) = pits(r,c)+1;
+                elseif board(r,c)>=3
+                    wumpus(r,c) = wumpus(r,c)+1;
+                end
+            end
+        end
+    end
+end
+
+pits = pits/num_trials;
+wumpus = wumpus/num_trials;
+    
