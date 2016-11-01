@@ -123,17 +123,6 @@ for i = 1:row
     frontier(5-adj_y, adj_x) = 1;
 end
 
-
-
-board
-pits
-Wumpus
-safe
-visited
-frontier
-
-
-
 % Glitter Check
 if percept(3)==1
     plan = [GRAB];
