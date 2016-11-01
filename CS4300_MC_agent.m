@@ -84,7 +84,7 @@ end
 
 
 % find safest place to go
-[pits,Wumpus] = CS4300_WP_estimates(breezes,stench,1000);
+[pits,Wumpus] = CS4300_WP_estimates(breezes,stench,10);
 
 % update info
 visited(5 - agent.y, agent.x) = 1;

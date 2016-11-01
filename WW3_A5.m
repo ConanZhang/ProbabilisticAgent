@@ -28,34 +28,23 @@ agent.succeed = 0;  % has gold and climbed out
 agent.climbed = 0; % climbed out
 
 clear(f_name);
+b = load('A5_boards.mat');
 
-board1 = [0,0,0,3;...
-    0,0,0,0;...
-    2,1,0,0;...
-    0,0,0,0];
-[score,trace] = CS4300_WW1(max_steps,f_name,board1);
-scores(1).board = board1;
-scores(1).score = score;
-scores(1).trace = trace;
+success =0;
+failure = 0;
+scores = [];
 
-clear(f_name);
+for i = 1:2
+    for trials = 1:2
+        board = b(1).boards(i).board;
+        clear(f_name);
+        [score,trace] = CS4300_WW1(max_steps,f_name,board);
+        scores(i,trials) = score;
+        if score>=0
+            success = success +1;
+        else
+            failure = failure +1;
+        end
+    end
+end
 
-board2 = [0,0,0,1;...
-    3,2,1,0;...
-    0,0,0,0;...
-    0,0,1,0];
-[score,trace] = CS4300_WW1(max_steps,f_name,board2);
-scores(2).board = board2;
-scores(2).score = score;
-scores(2).trace = trace;
-
-clear(f_name);
-
-board3 = [0,0,0,0;...
-    0,0,0,0;...
-    3,2,0,0;...
-    0,1,0,0];
-[score,trace] = CS4300_WW1(max_steps,f_name,board3);
-scores(3).board = board3;
-scores(3).score = score;
-scores(3).trace = trace;
