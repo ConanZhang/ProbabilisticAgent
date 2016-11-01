@@ -22,8 +22,9 @@ safe_location.x = 1;
 safe_location.y = 1;
 safe_location.dir = 0;
 
-while(isempty(solution) & max(Wumpus) ~= 0)
-    [row,col] = find(max(Wumpus));
+while(isempty(solution) && max(Wumpus(:))~= 0)
+    maxValue = max(Wumpus(:));
+    [row,col] = find(Wumpus == maxValue);
     if(Wumpus(row,col) == 0)
        return; 
     end

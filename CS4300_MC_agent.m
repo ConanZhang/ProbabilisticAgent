@@ -66,17 +66,23 @@ end
 % Stench
 if(percept(1) == 1 && ~wumpus_killed)
     stench(5 - agent.y, agent.x) = 1;
+else
+    stench(5 - agent.y, agent.x) = 0;
 end
 % Breezes
 if(percept(2) == 1)
     breezes(5 - agent.y, agent.x) = 1;
+else
+    breezes(5 - agent.y, agent.x) = 0;
 end
 % Scream
 if(percept(5) == 1)
     wumpus_killed = 1;
     stench = zeros(4,4);
 end
-    
+
+
+
 % find safest place to go
 [pits,Wumpus] = CS4300_WP_estimates(breezes,stench,1000);
 
@@ -88,15 +94,15 @@ board(5 - agent.y, agent.x) = 0;
 safe(5 - agent.y, agent.x) = 1;
 [safe_rows, safe_cols] = find(pits == 0&Wumpus == 0);
 for i = 1:size(safe_rows)
-    safe(safe_rows, safe_cols) = 1;
-    board(safe_rows, safe_cols) = 0;
+    safe(safe_rows(i), safe_cols(i)) = 1;
+    board(safe_rows(i), safe_cols(i)) = 0;
 end
 
 % Update by pits
 [pit_rows, pit_cols] = find(pits == 1);
 for i = 1:size(pit_rows)
-    board(pit_rows, pit_cols) = 1;
-    safe(pit_rows, pit_cols) = 0;
+    board(pit_rows(i), pit_cols(i)) = 1;
+    safe(pit_rows(i), pit_cols(i)) = 0;
 end
 
 % Update by Wumpus
@@ -131,19 +137,18 @@ end
 
 % Unvisited Safe Spaces
 if isempty(plan)
-    [cand_rows,cand_cols] = find(frontier==1&safe==-1&visited==0);
-    probs = ones(4,4)*2;
-    for i = 1:size(cand_rows)
-        probs(cand_rows(i), cand_cols(i)) = pits(cand_rows(i), cand_cols(i))...
-                                       + Wumpus(cand_rows(i), cand_cols(i));
-    end
-    [row, col] = find(min(probs));
-    [so,no] = CS4300_Wumpus_A_star(abs(board),...
+    [cand_rows,cand_cols] = find(frontier==1&safe==1&visited==0);
+    if ~isempty(cand_rows)
+        cand_x = cand_cols;
+        cand_y = 4 - cand_rows + 1;
+        [so,no] = CS4300_Wumpus_A_star(abs(board),...
             [agent.x,agent.y,agent.dir],...
-            [5-col,row,0],'CS4300_A_star_Man');
-    for i = 1:size(so)
-        if(so(i, 4) ~= 0)
-            plan(end+1) = so(i, 4);
+            [cand_x(1),cand_y(1),0],'CS4300_A_star_Man');
+        
+        for i = 1:size(so)
+            if(so(i, 4) ~= 0)
+                plan(end+1) = so(i, 4);
+            end
         end
     end
 end
@@ -157,14 +162,23 @@ end
 % Take a risk
 if isempty(plan)
     [cand_rows,cand_cols] = find(frontier==1&safe==-1&visited==0);
-    cand_x = cand_cols;
-    cand_y = 4 - cand_rows + 1;
-    temp_board = board;
-    temp_board(cand_rows(1),cand_cols(1)) = 0;
-    [so,no] = CS4300_Wumpus_A_star(abs(temp_board),...
-        [agent.x,agent.y,agent.dir],...
-        [cand_x(1),cand_y(1),0],'CS4300_A_star_Man');
-    plan = [so(2:end,4)];
+    probs = ones(4,4)*2;
+    for i = 1:size(cand_rows)
+        probs(cand_rows(i), cand_cols(i)) = pits(cand_rows(i), cand_cols(i))...
+                                       + Wumpus(cand_rows(i), cand_cols(i));
+    end
+     minValue = min(probs(:));
+    [row,col] = find(probs == minValue);
+    board(row(1), col(1)) = 0;
+    [so,no] = CS4300_Wumpus_A_star(abs(board),...
+            [agent.x,agent.y,agent.dir],...
+            [col(1),5-row(1),0],'CS4300_A_star_Man');
+        
+    for i = 1:size(so)
+        if(so(i, 4) ~= 0)
+            plan(end+1) = so(i, 4);
+        end
+    end
 end
 
 action = plan(1);
