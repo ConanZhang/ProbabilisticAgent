@@ -40,7 +40,7 @@ function [pits,wumpus] = CS4300_WP_estimates(breezes,stench,num_trials)
 is_wumpus=1;
 
 if stench == zeros(4,4)
-    is_wumpus = 0;
+    wumpus = 0;
 end
 
 pits = zeros(4,4);
@@ -48,9 +48,8 @@ wumpus = zeros(4,4)
 s = 0;
 while s<num_trials
     board = CS4300_gen_board(0.2);
-    if(is_wumpus==0)%generate boards without a wumpus if stench board is all zeros, i.e wumpus has been killed
-        [rows,cols] = find(board>=3);
-        board(rows,cols)= 0;
+    if(is_wumpus==0)
+        
     end
     if CS4300_WP_satisfies(breezes, stench, board)
         s=s+1; %increment only if satisfied
