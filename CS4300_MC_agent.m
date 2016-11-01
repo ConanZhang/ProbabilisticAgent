@@ -92,26 +92,39 @@ end
 % update info
 visited(5 - agent.y, agent.x) = 1;
 board(5 - agent.y, agent.x) = 0;
+safe(5 - agent.y, agent.x) = 1;
 
 % Update safe
 safe(5 - agent.y, agent.x) = 1;
 [safe_rows, safe_cols] = find(pits == 0&Wumpus == 0);
 for i = 1:size(safe_rows)
-    safe(safe_rows(i), safe_cols(i)) = 1;
-    board(safe_rows(i), safe_cols(i)) = 0;
+    if(safe(safe_rows(i), safe_cols(i) == -1))
+        safe(safe_rows(i), safe_cols(i)) = 1;
+    end
+    if(board(safe_rows(i), safe_cols(i) == -1))
+        board(safe_rows(i), safe_cols(i)) = 0;
+    end
 end
 
 % Update by pits
 [pit_rows, pit_cols] = find(pits == 1);
 for i = 1:size(pit_rows)
-    board(pit_rows(i), pit_cols(i)) = 1;
-    safe(pit_rows(i), pit_cols(i)) = 0;
+    if(board(pit_rows(i), pit_cols(i)) == -1)
+        board(pit_rows(i), pit_cols(i)) = 1;
+    end
+    if(safe(pit_rows(i), pit_cols(i)) == -1)
+        safe(pit_rows(i), pit_cols(i)) = 0;
+    end
 end
 
 % Update by Wumpus
 [wumpus_row, wumpus_col] = find(Wumpus == 1);
-board(wumpus_row, wumpus_col) = 3;
-safe(wumpus_row, wumpus_col) = 0;
+if(board(wumpus_row, wumpus_col) == -1)
+    board(wumpus_row, wumpus_col) = 3;
+end
+if safe(wumpus_row, wumpus_col) ==-1
+    safe(wumpus_row, wumpus_col) = 0;
+end
 
 % Update frontier
 adj =[];
@@ -165,6 +178,7 @@ end
 % Take a risk
 if isempty(plan)
     [cand_rows,cand_cols] = find(frontier==1&safe==-1&visited==0);
+    % Have agent kill itself
     if isempty(cand_rows)
         [cand_rows,cand_cols] = find(frontier==1&visited==0);
     end
@@ -175,28 +189,10 @@ if isempty(plan)
     end
      minValue = min(probs(:));
     [row,col] = find(probs == minValue);
-    orig = board(row(1), col(1));
     board(row(1), col(1)) = 0;
     [so,no] = CS4300_Wumpus_A_star(abs(board),...
             [agent.x,agent.y,agent.dir],...
             [col(1),5-row(1),0],'CS4300_A_star_Man');
-    
-    if isempty(so)
-        board(row(1), col(1))= orig;
-        
-        [col,row] = size(adj);
-        for i = 1:row
-            adj_x = adj(i).coord(1);
-            adj_y = adj(i).coord(2);
-            if visited(5-adj_y, adj_x)==0
-                board(5-adj_y,adj_x)=0;
-                [so,no] = CS4300_Wumpus_A_star(abs(board),...
-                [agent.x,agent.y,agent.dir],...
-                [adj_x,adj_y,0],'CS4300_A_star_Man');
-                break;
-            end
-        end
-    end
         
     for i = 1:size(so)
         if(so(i, 4) ~= 0)
