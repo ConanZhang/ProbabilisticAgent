@@ -77,14 +77,35 @@ if(percept(5) == 1)
     stench = zeros(4,4);
 end
     
-% update info
-safe(5 - agent.y, agent.x) = 1;
-visited(5 - agent.y, agent.x) = 1;
-
 % find safest place to go
 [pits,Wumpus] = CS4300_WP_estimates(breezes,stench,num_trials);
 
-% Glitter Ask
+% update info
+visited(5 - agent.y, agent.x) = 1;
+
+% Update safe
+safe(5 - agent.y, agent.x) = 1;
+[safe_rows, safe_cols] = find(pits == 0&Wumpus == 0);
+for i = 1:size(safe_rows)
+    safe(safe_rows, safe_cols) = 1;
+    board(safe_rows, safe_cols) = 0;
+end
+
+% Update by pits
+[pit_rows, pit_cols] = find(pits == 1);
+for i = 1:size(pit_rows)
+    board(pit_rows, pit_cols) = 1;
+    safe(pit_rows, pit_cols) = 0;
+end
+
+% Update by Wumpus
+[wumpus_row, wumpus_col] = find(Wumpus == 1);
+board(wumpus_row, wumpus_col) = 3;
+safe(wumpus_row, wumpus_col) = 0;
+
+% Update frontier
+
+% Glitter Check
 if percept(3)==1
     plan = [GRAB];
     have_gold = 1;
@@ -95,6 +116,7 @@ if percept(3)==1
     plan = [plan;CLIMB];
 end
 
+% Unvisited Safe Spaces
 if isempty(plan)
     [cand_rows,cand_cols] = find(frontier==1&safe==1&visited==0);
     if ~isempty(cand_rows)

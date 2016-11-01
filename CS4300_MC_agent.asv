@@ -30,7 +30,7 @@ GRAB = 4;
 SHOOT = 5;
 CLIMB = 6;
 
-persistent safe pits Wumpus breezes stenches board have_gold have_arrow plan
+persistent safe pits Wumpus breezes stench board have_gold have_arrow wumpus_killed plan
 persistent agent frontier visited t
 
 if isempty(agent)
@@ -42,7 +42,7 @@ if isempty(agent)
     pits = -ones(4,4);
     Wumpus = -ones(4,4);
     breezes = -ones(4,4);
-    stenches = -ones(4,4);
+    stench = -ones(4,4);
     board = -ones(4,4);
     visited = zeros(4,4);
     frontier = zeros(4,4);
@@ -53,6 +53,7 @@ if isempty(agent)
     visited(4,1) = 1;
     have_gold = 0;
     have_arrow = 1;
+    wumpus_killed = 0;
 end
 
 if have_gold==1&~isempty(plan)
@@ -63,25 +64,43 @@ end
 
 % incorporate new percepts
 % Stench
-if(percept(1) == 1)
+if(percept(1) == 1 && ~wumpus_killed)
     stench(5 - agent.y, agent.x) = 1;
 end
 % Breezes
 if(percept(2) == 1)
-    breeze(5 - agent.y, agent.x) = 1;
+    breezes(5 - agent.y, agent.x) = 1;
 end
 % Scream
 if(percept(5) == 1)
-    
+    wumpus_killed = 1;
+    stench = zeros(4,4);
 end
     
+% find safest place to go
+[pits,Wumpus] = CS4300_WP_estimates(breezes,stench,num_trials);
+
 % update info
-safe(5 - agent.y, agent.x) = 1;
 visited(5 - agent.y, agent.x) = 1;
 
-% find safest place to go
+safe(5 - agent.y, agent.x) = 1;
+[safe_rows, safe_cols] = find(pits == 0&Wumpus == 0);
+for i = 1:size(safe_rows)
+    safe(safe_rows, safe_cols) = 1;
+    board(safe_rows, safe_cols) = 0;
+end
 
+[pit_rows, pit_cols] = find(pits == 1);
+for i = 1:size(pit_rows)
+    board(pit_rows, pit_cols) = 1;
+    safe(pit_rows, pit_cols) = 0;
+end
 
+[wumpus_row, wumpus_col] = find(Wumpus == 1);
+board(wumpus_rows, pit_cols) = 1;
+safe(wumpus_row, wumpus_col) = 0;
+
+% Glitter Check
 if percept(3)==1
     plan = [GRAB];
     have_gold = 1;
@@ -92,6 +111,7 @@ if percept(3)==1
     plan = [plan;CLIMB];
 end
 
+% Unvisited Safe Spaces
 if isempty(plan)
     [cand_rows,cand_cols] = find(frontier==1&safe==1&visited==0);
     if ~isempty(cand_rows)

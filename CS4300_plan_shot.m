@@ -51,12 +51,7 @@ for i = 1:4
 end
 
 % Use A* to move to shot location
-[rows, cols] = find(safe == 1);
-for i = 1:size(rows)
-    safe(rows, cols) = 0;
-end
-
-[solution, nodes] = CS4300_Wumpus_A_star(abs(safe), [agent.x, agent.y, agent.dir]...
+[solution, nodes] = CS4300_Wumpus_A_star(abs(board), [agent.x, agent.y, agent.dir]...
 , [safe_location.y, 5-safe_location.x, 0], 'CS4300_A_star_Man');
 
 % Move there
