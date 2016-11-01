@@ -84,7 +84,7 @@ end
 
 
 % find safest place to go
-[pits,Wumpus] = CS4300_WP_estimates(breezes,stench,1);
+[pits,Wumpus] = CS4300_WP_estimates(breezes,stench,20);
 
 
 
@@ -98,10 +98,10 @@ safe(5 - agent.y, agent.x) = 1;
 safe(5 - agent.y, agent.x) = 1;
 [safe_rows, safe_cols] = find(pits == 0&Wumpus == 0);
 for i = 1:size(safe_rows)
-    if(safe(safe_rows(i), safe_cols(i) == -1))
+    if safe(safe_rows(i), safe_cols(i)) == -1
         safe(safe_rows(i), safe_cols(i)) = 1;
     end
-    if(board(safe_rows(i), safe_cols(i) == -1))
+    if board(safe_rows(i), safe_cols(i)) == -1
         board(safe_rows(i), safe_cols(i)) = 0;
     end
 end
@@ -109,17 +109,17 @@ end
 % Update by pits
 [pit_rows, pit_cols] = find(pits == 1);
 for i = 1:size(pit_rows)
-    if(board(pit_rows(i), pit_cols(i)) == -1)
+    if board(pit_rows(i), pit_cols(i)) == -1
         board(pit_rows(i), pit_cols(i)) = 1;
     end
-    if(safe(pit_rows(i), pit_cols(i)) == -1)
+    if safe(pit_rows(i), pit_cols(i)) == -1
         safe(pit_rows(i), pit_cols(i)) = 0;
     end
 end
 
 % Update by Wumpus
 [wumpus_row, wumpus_col] = find(Wumpus == 1);
-if(board(wumpus_row, wumpus_col) == -1)
+if board(wumpus_row, wumpus_col) == -1
     board(wumpus_row, wumpus_col) = 3;
 end
 if safe(wumpus_row, wumpus_col) ==-1
