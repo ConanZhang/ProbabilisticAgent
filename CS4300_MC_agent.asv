@@ -83,6 +83,7 @@ end
 % update info
 visited(5 - agent.y, agent.x) = 1;
 
+% Update safe
 safe(5 - agent.y, agent.x) = 1;
 [safe_rows, safe_cols] = find(pits == 0&Wumpus == 0);
 for i = 1:size(safe_rows)
@@ -90,15 +91,28 @@ for i = 1:size(safe_rows)
     board(safe_rows, safe_cols) = 0;
 end
 
+% Update by pits
 [pit_rows, pit_cols] = find(pits == 1);
 for i = 1:size(pit_rows)
     board(pit_rows, pit_cols) = 1;
     safe(pit_rows, pit_cols) = 0;
 end
 
+% Update by Wumpus
 [wumpus_row, wumpus_col] = find(Wumpus == 1);
-board(wumpus_rows, pit_cols) = 1;
+board(wumpus_row, wumpus_col) = 3;
 safe(wumpus_row, wumpus_col) = 0;
+
+% Update frontier
+adj =[];
+adj = CS4300_get_adjacent(agent.x, agent.y);
+[col,row] = size(adj);
+for i = 1:row %check if there is at least one pit adj to the breeze
+    adj_x = adj(i).coord(1);
+    adj_y = adj(i).coord(2);
+    frontier(
+end
+
 
 % Glitter Check
 if percept(3)==1
