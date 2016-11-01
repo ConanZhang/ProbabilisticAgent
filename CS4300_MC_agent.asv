@@ -78,7 +78,7 @@ if(percept(5) == 1)
 end
     
 % find safest place to go
-[pits,Wumpus] = CS4300_WP_estimates(breezes,stench,num_trials);
+[pits,Wumpus] = CS4300_WP_estimates(breezes,stench,1000);
 
 % update info
 visited(5 - agent.y, agent.x) = 1;
@@ -120,24 +120,30 @@ if percept(3)==1
     [so,no] = CS4300_Wumpus_A_star(abs(board),...
         [agent.x,agent.y,agent.dir],...
         [1,1,0],'CS4300_A_star_Man');
-    plan = [plan;so(2:end,4)];
-    plan = [plan;CLIMB];
+    for i = 1:size(so)
+        if(so(i, 4) ~= 0)
+            plan(end+1) = so(i, 4);
+        end
+    end
+    plan(end+1) = CLIMB;
 end
 
 % Unvisited Safe Spaces
 if isempty(plan)
-    [cand_rows,cand_cols] = find(frontier==1&safe==1&visited==0);
+    [cand_rows,cand_cols] = find(frontier==1&safe==-1&visited==0);
     probs = ones(4,4)*2;
     for i = 1:size(cand_rows)
-        probs(cand_rows(i), cand_cols(i)) = pits(cand_rows(i), cand_cols(i)) + W
+        probs(cand_rows(i), cand_cols(i)) = pits(cand_rows(i), cand_cols(i))...
+                                       + Wumpus(cand_rows(i), cand_cols(i));
     end
-    if ~isempty(cand_rows)
-        cand_x = cand_cols;
-        cand_y = 4 - cand_rows + 1;
-        [so,no] = CS4300_Wumpus_A_star(abs(board),...
+    [row, col] = find(min(probs));
+    [so,no] = CS4300_Wumpus_A_star(abs(board),...
             [agent.x,agent.y,agent.dir],...
-            [cand_x(1),cand_y(1),0],'CS4300_A_star_Man');
-        plan = [so(2:end,4)];
+            [5-col,row,0],'CS4300_A_star_Man');
+    for i = 1:size(so)
+        if(so(i, 4) ~= 0)
+            plan(end+1) = so(i, 4);
+        end
     end
 end
 

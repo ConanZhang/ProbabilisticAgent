@@ -22,7 +22,7 @@ safe_location.x = 1;
 safe_location.y = 1;
 safe_location.dir = 0;
 
-while(isempty(solution) && max(Wumpus) ~= 0)
+while(isempty(solution) & max(Wumpus) ~= 0)
     [row,col] = find(max(Wumpus));
     if(Wumpus(row,col) == 0)
        return; 
@@ -58,29 +58,32 @@ while(isempty(solution) && max(Wumpus) ~= 0)
     , [safe_location.y, 5-safe_location.x, 0], 'CS4300_A_star_Man');
 end
 
-% Move there
-for i = 1:size(solution)
-    if(solution(i, 4) ~= 0)
-        plan(end+1) = solution(i, 4);
+if(~isempty(solution))
+   % Move there
+    for i = 1:size(solution)
+        if(solution(i, 4) ~= 0)
+            plan(end+1) = solution(i, 4);
+        end
     end
+
+    % Make sure direction is toward Wumpus
+    end_dir = solution(end, 3);
+    dif = abs(end_dir - safe_location.dir);
+
+    if(dif == 1)
+       if(end_dir < safe_location.dir)
+          plan(end+1) = 3;
+       else
+          plan(end+1) = 2;
+       end
+    elseif(dif == 2)
+        plan(end+1) = 3;
+        plan(end+1) = 3;
+    elseif(dif == 3)
+        plan(end+1) = 3;
+    end
+
+    % Shoot arrow
+    plan(end+1) = 5; 
 end
 
-% Make sure direction is toward Wumpus
-end_dir = solution(end, 3);
-dif = abs(end_dir - safe_location.dir);
-
-if(dif == 1)
-   if(end_dir < safe_location.dir)
-      plan(end+1) = 3;
-   else
-      plan(end+1) = 2;
-   end
-elseif(dif == 2)
-    plan(end+1) = 3;
-    plan(end+1) = 3;
-elseif(dif == 3)
-    plan(end+1) = 3;
-end
-
-% Shoot arrow
-plan(end+1) = 5;

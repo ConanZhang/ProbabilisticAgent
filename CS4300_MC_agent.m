@@ -78,10 +78,11 @@ if(percept(5) == 1)
 end
     
 % find safest place to go
-[pits,Wumpus] = CS4300_WP_estimates(breezes,stench,num_trials);
+[pits,Wumpus] = CS4300_WP_estimates(breezes,stench,1000);
 
 % update info
 visited(5 - agent.y, agent.x) = 1;
+board(5 - agent.y, agent.x) = 0;
 
 % Update safe
 safe(5 - agent.y, agent.x) = 1;
@@ -120,8 +121,12 @@ if percept(3)==1
     [so,no] = CS4300_Wumpus_A_star(abs(board),...
         [agent.x,agent.y,agent.dir],...
         [1,1,0],'CS4300_A_star_Man');
-    plan = [plan;so(2:end,4)];
-    plan = [plan;CLIMB];
+    for i = 1:size(so)
+        if(so(i, 4) ~= 0)
+            plan(end+1) = so(i, 4);
+        end
+    end
+    plan(end+1) = CLIMB;
 end
 
 % Unvisited Safe Spaces
@@ -136,7 +141,11 @@ if isempty(plan)
     [so,no] = CS4300_Wumpus_A_star(abs(board),...
             [agent.x,agent.y,agent.dir],...
             [5-col,row,0],'CS4300_A_star_Man');
-    plan = [so(2:end,4)];
+    for i = 1:size(so)
+        if(so(i, 4) ~= 0)
+            plan(end+1) = so(i, 4);
+        end
+    end
 end
 
 % No Wumpus shot yet

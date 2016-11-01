@@ -44,7 +44,7 @@ if stench == zeros(4,4)
 end
 
 pits = zeros(4,4);
-wumpus = zeros(4,4)
+wumpus = zeros(4,4);
 s = 0;
 while s<num_trials
     board = CS4300_gen_board(0.2);
