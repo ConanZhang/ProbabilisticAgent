@@ -107,7 +107,7 @@ safe(wumpus_row, wumpus_col) = 0;
 adj =[];
 adj = CS4300_get_adjacent(agent.x, agent.y);
 [col,row] = size(adj);
-for i = 1:row %check if there is at least one pit adj to the breeze
+for i = 1:row
     adj_x = adj(i).coord(1);
     adj_y = adj(i).coord(2);
     frontier(5-adj_y, adj_x) = 1;
@@ -126,15 +126,17 @@ end
 
 % Unvisited Safe Spaces
 if isempty(plan)
-    [cand_rows,cand_cols] = find(frontier==1&safe==1&visited==0);
-    if ~isempty(cand_rows)
-        cand_x = cand_cols;
-        cand_y = 4 - cand_rows + 1;
-        [so,no] = CS4300_Wumpus_A_star(abs(board),...
-            [agent.x,agent.y,agent.dir],...
-            [cand_x(1),cand_y(1),0],'CS4300_A_star_Man');
-        plan = [so(2:end,4)];
+    [cand_rows,cand_cols] = find(frontier==1&safe==-1&visited==0);
+    probs = ones(4,4)*2;
+    for i = 1:size(cand_rows)
+        probs(cand_rows(i), cand_cols(i)) = pits(cand_rows(i), cand_cols(i))...
+                                       + Wumpus(cand_rows(i), cand_cols(i));
     end
+    [row, col] = find(min(probs));
+    [so,no] = CS4300_Wumpus_A_star(abs(board),...
+            [agent.x,agent.y,agent.dir],...
+            [5-col,row,0],'CS4300_A_star_Man');
+    plan = [so(2:end,4)];
 end
 
 % No Wumpus shot yet
@@ -145,7 +147,7 @@ end
 
 % Take a risk
 if isempty(plan)
-    [cand_rows,cand_cols] = find(frontier==1);
+    [cand_rows,cand_cols] = find(frontier==1&safe==-1&visited==0);
     cand_x = cand_cols;
     cand_y = 4 - cand_rows + 1;
     temp_board = board;
