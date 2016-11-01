@@ -30,7 +30,7 @@ GRAB = 4;
 SHOOT = 5;
 CLIMB = 6;
 
-persistent safe pits Wumpus breezes stench board have_gold have_arrow wumpus_killed plan
+persistent safe pits Wumpus breezes stenches board have_gold have_arrow plan
 persistent agent frontier visited t
 
 if isempty(agent)
@@ -42,7 +42,7 @@ if isempty(agent)
     pits = -ones(4,4);
     Wumpus = -ones(4,4);
     breezes = -ones(4,4);
-    stench = -ones(4,4);
+    stenches = -ones(4,4);
     board = -ones(4,4);
     visited = zeros(4,4);
     frontier = zeros(4,4);
@@ -53,7 +53,6 @@ if isempty(agent)
     visited(4,1) = 1;
     have_gold = 0;
     have_arrow = 1;
-    wumpus_killed = 0;
 end
 
 if have_gold==1&~isempty(plan)
@@ -64,17 +63,16 @@ end
 
 % incorporate new percepts
 % Stench
-if(percept(1) == 1 && ~wumpus_killed)
+if(percept(1) == 1)
     stench(5 - agent.y, agent.x) = 1;
 end
 % Breezes
 if(percept(2) == 1)
-    breezes(5 - agent.y, agent.x) = 1;
+    breeze(5 - agent.y, agent.x) = 1;
 end
 % Scream
 if(percept(5) == 1)
-    wumpus_killed = 1;
-    stench = zeros(4,4);
+    
 end
     
 % update info
@@ -82,9 +80,8 @@ safe(5 - agent.y, agent.x) = 1;
 visited(5 - agent.y, agent.x) = 1;
 
 % find safest place to go
-[pits,Wumpus] = CS4300_WP_estimates(breezes,stench,num_trials);
 
-% Glitter Ask
+
 if percept(3)==1
     plan = [GRAB];
     have_gold = 1;
