@@ -104,6 +104,14 @@ board(wumpus_row, wumpus_col) = 3;
 safe(wumpus_row, wumpus_col) = 0;
 
 % Update frontier
+adj =[];
+adj = CS4300_get_adjacent(agent.x, agent.y);
+[col,row] = size(adj);
+for i = 1:row %check if there is at least one pit adj to the breeze
+    adj_x = adj(i).coord(1);
+    adj_y = adj(i).coord(2);
+    frontier(5-adj_y, adj_x) = 1;
+end
 
 % Glitter Check
 if percept(3)==1
