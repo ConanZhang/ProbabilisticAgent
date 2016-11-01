@@ -2,7 +2,7 @@ function action_sequence = CS4300_plan_route(current, goals, board)
 % CS4300_ask - Tells whether can resolve theorem with knowledge base
 % On input:
 %     current: The current position of the agent
-%     goals(set of cells) : a set of squares; try to plan a route to one of them 
+%     goals(set of cells) : a set of squares; try to plan a route to one of them
 %     board (set of cells): a set of squares that can form part of the
 %     row and col: coordinates of the destination
 %     route
