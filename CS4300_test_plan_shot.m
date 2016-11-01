@@ -20,7 +20,6 @@ safe(4,2) = 1;
 safe(3,2) = 1;
 safe(3,3) = 1;
 Wumpus(4,1) = 0;
-Wumpus(1,3) = 1;
 board(4,1) = 0;
 board(4,2) = 0;
 board(3,2) = 0;
