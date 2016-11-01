@@ -1,22 +1,9 @@
-breeze = [-1,-1,1,-1;...
-          -1,1,-1,1;...
-          -1,-1,1,-1;...
-          -1,1,-1,1];
-        
-stench = [-1,1,-1,-1;...
-           1,-1,-1,-1;...
-          -1,-1,-1,-1;...
-          -1,-1,-1,-1];
-      
-board = [3,-1,-1,-1;...
-       -1,-1,1,-1;...
-       -1,-1,-1,-1;...
-       -1,-1,1,-1];      
+
         
 
-   
-   %CS4300_WP_satisfies(breeze,stench,board)
-   
-   [p, w] = CS4300_WP_estimates(breeze,stench,100);
-   p
-   w
+breezes = -ones(4,4);
+breezes(4,1) = 1;
+stench = -ones(4,4);
+stench(4,1) = 0;
+[pts,Wumpus] = CS4300_WP_estimates(breezes,stench,10000)
+

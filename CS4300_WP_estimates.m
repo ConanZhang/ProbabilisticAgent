@@ -46,9 +46,9 @@ while s<num_trials
         [rows, cols] = size(board);
         for r= 1:rows
             for c = 1:cols
-                if board(r,c)==1
+                if board(r,c)==1 %if pit
                     pits(r,c) = pits(r,c)+1;
-                elseif board(r,c)>=3
+                elseif board(r,c)>=3 %if wumpus
                     wumpus(r,c) = wumpus(r,c)+1;
                 end
             end
