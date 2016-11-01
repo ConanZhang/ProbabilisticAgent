@@ -34,8 +34,8 @@ success =0;
 failure = 0;
 scores = [];
 
-for i = 1:2
-    for trials = 1:2
+for i = 1:50
+    for trials = 1:5
         board = b(1).boards(i).board;
         clear(f_name);
         [score,trace] = CS4300_WW1(max_steps,f_name,board);
@@ -47,4 +47,4 @@ for i = 1:2
         end
     end
 end
-
+scores

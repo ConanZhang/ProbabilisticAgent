@@ -84,7 +84,7 @@ end
 
 
 % find safest place to go
-[pits,Wumpus] = CS4300_WP_estimates(breezes,stench,10);
+[pits,Wumpus] = CS4300_WP_estimates(breezes,stench,1);
 
 % update info
 visited(5 - agent.y, agent.x) = 1;
@@ -162,6 +162,9 @@ end
 % Take a risk
 if isempty(plan)
     [cand_rows,cand_cols] = find(frontier==1&safe==-1&visited==0);
+    if isempty(cand_rows)
+        [cand_rows,cand_cols] = find(frontier==1&visited==0);
+    end
     probs = ones(4,4)*2;
     for i = 1:size(cand_rows)
         probs(cand_rows(i), cand_cols(i)) = pits(cand_rows(i), cand_cols(i))...
@@ -181,6 +184,9 @@ if isempty(plan)
     end
 end
 
+if isempty(plan)
+    bleh
+end
 action = plan(1);
 plan = plan(2:end);
 
