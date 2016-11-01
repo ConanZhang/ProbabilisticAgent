@@ -1,17 +1,17 @@
-function adj = CS4300_get_adjacent(x,y)
+function adj = CS4300_get_adjacent(row,col)
     adj = [];
-    if x-1>0 %add left element
-        adj(end+1).coord = [x-1,y];
+    if col-1>0 %add left element
+        adj(end+1).coord = [row,col-1];
     end
-    if x+1<5 %add right element
-        adj(end+1).coord = [x+1,y];
-    end
-
-    if y-1>0
-        adj(end+1).coord = [x,y-1];
+    if col+1<5 %add right element
+        adj(end+1).coord = [row,col+1];
     end
 
-     if y+1<5
-        adj(end+1).coord = [x,y+1];
+    if row-1>0 %up
+        adj(end+1).coord = [row-1,col];
+    end
+
+     if row+1<5 %down
+        adj(end+1).coord = [row+1,col];
      end
 end
